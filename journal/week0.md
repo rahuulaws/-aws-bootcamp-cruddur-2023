@@ -5,7 +5,7 @@
 
 ### Create Billing Alarm
 
-!.[Billing Alarms].(assets/Week%200_Billing%20Alarm.jpg)
+!.[Billing Alarms].(assets/Week 0_Billing Alarm.jpg)
 
 ### Create Budget
 
