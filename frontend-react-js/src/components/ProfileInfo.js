@@ -19,7 +19,8 @@ export default function ProfileInfo(props) {
     } catch (error) {
         console.log('error signing out: ', error);
     }
-  
+  }
+
   const classes = () => {
     let classes = ["profile-info-wrapper"];
     if (popped == true){
@@ -27,7 +28,7 @@ export default function ProfileInfo(props) {
     }
     return classes.join(' ');
   }
-}
+
   return (
     <div className={classes()}>
       <div className="profile-dialog">
