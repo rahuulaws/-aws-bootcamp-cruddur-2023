@@ -60,7 +60,7 @@ class Db:
 #################################
     # Main Commit function to execute a QUERY
     def query_commit(self, sql, params={}):
-        self.print_sql('commit with returning', sql)
+        self.print_sql('commit with returning', sql,params)
         # we want to commit data such as an insert
         # be sure to check for RETURNING in all uppercases
         pattern = r"\bRETURNING\b"
