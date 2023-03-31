@@ -1,24 +1,24 @@
 import './App.css';
-
 import HomeFeedPage from './pages/HomeFeedPage';
+import NotificationsFeedPage from './pages/NotificationsFeedPage';
 import UserFeedPage from './pages/UserFeedPage';
 import SignupPage from './pages/SignupPage';
 import SigninPage from './pages/SigninPage';
 import RecoverPage from './pages/RecoverPage';
 import MessageGroupsPage from './pages/MessageGroupsPage';
 import MessageGroupPage from './pages/MessageGroupPage';
+import MessageGroupNewPage from './pages/MessageGroupNewPage';
 import ConfirmationPage from './pages/ConfirmationPage';
 import React from 'react';
-import process from 'process';
 import {
   createBrowserRouter,
   RouterProvider
 } from "react-router-dom";
-
 import { Amplify } from 'aws-amplify';
 
 Amplify.configure({
   "AWS_PROJECT_REGION": process.env.REACT_APP_AWS_PROJECT_REGION,
+
   "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
   "aws_user_pools_id": process.env.REACT_APP_AWS_USER_POOLS_ID,
   "aws_user_pools_web_client_id": process.env.REACT_APP_CLIENT_ID,
@@ -36,6 +36,11 @@ const router = createBrowserRouter([
     path: "/",
     element: <HomeFeedPage />
   },
+
+  {
+    path: "/notifications",
+    element: <NotificationsFeedPage />
+  },
   {
     path: "/@:handle",
     element: <UserFeedPage />
@@ -45,7 +50,12 @@ const router = createBrowserRouter([
     element: <MessageGroupsPage />
   },
   {
-    path: "/messages/@:handle",
+
+    path: "/messages/new/:handle",
+    element: <MessageGroupNewPage />
+  },
+  {
+    path: "/messages/:message_group_uuid",
     element: <MessageGroupPage />
   },
   {
@@ -65,7 +75,6 @@ const router = createBrowserRouter([
     element: <RecoverPage />
   }
 ]);
-
 function App() {
   return (
     <>
@@ -73,5 +82,5 @@ function App() {
     </>
   );
 }
-
 export default App;
+
