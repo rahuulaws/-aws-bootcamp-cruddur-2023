@@ -112,6 +112,11 @@ class Db:
                   json = cur.fetchone()
                   return json[0]
 
+                  if json is not None:
+                    return json[0]
+                  else:
+                    return None
+
     def query_wrap_object(self, template):
         sql = f"""
     (SELECT COALESCE(row_to_json(object_row),'{{}}'::json) FROM (

@@ -40,6 +40,8 @@ export default function MessageGroupsPage() {
     loadData();
 
     checkAuth(setUser);
+
+    
   }, [])
   return (
     <article>
