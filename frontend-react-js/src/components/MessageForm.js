@@ -1,7 +1,6 @@
 import './MessageForm.css';
 import React from "react";
 import process from 'process';
-
 import { json, useParams } from 'react-router-dom';
 
 export default function ActivityForm(props) {
@@ -63,4 +62,15 @@ export default function ActivityForm(props) {
   return (
     <form 
       className='message_form'
+      onSubmit={onsubmit}>
+      <textarea
+        onChange={textarea_onchange}
+        placeholder="Type your message here..."
+        maxLength={1024}
+        required
+      />
+      <div className={classes.join(' ')}>{count} / 1024</div>
+      <button type="submit">Send</button>
+    </form>
+  );
 }

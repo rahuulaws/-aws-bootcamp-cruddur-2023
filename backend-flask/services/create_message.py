@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-
 from lib.db import db
 from lib.ddb import Ddb
 
@@ -16,7 +15,6 @@ class CreateMessage:
       if message_group_uuid == None or len(message_group_uuid) < 1:
         model['errors'] = ['message_group_uuid_blank']
 
-
     if cognito_user_id == None or len(cognito_user_id) < 1:
       model['errors'] = ['cognito_user_id_blank']
 
@@ -28,6 +26,7 @@ class CreateMessage:
       model['errors'] = ['message_blank'] 
     elif len(message) > 1024:
       model['errors'] = ['message_exceed_max_chars'] 
+
     if model['errors']:
       # return what we provided
       model['data'] = {
@@ -35,9 +34,8 @@ class CreateMessage:
         'handle':  user_sender_handle,
         'message': message
       }
-else:
-
-  sql = db.template('users','create_message_users')
+    else:
+      sql = db.template('users','create_message_users')
 
       if user_receiver_handle == None:
         rev_handle = ''
@@ -81,5 +79,3 @@ else:
           other_user_handle=other_user['handle']
         )
       model['data'] = data
-
-      
