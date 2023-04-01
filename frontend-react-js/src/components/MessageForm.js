@@ -63,4 +63,4 @@ export default function ActivityForm(props) {
   return (
     <form 
       className='message_form'
-      
+}
