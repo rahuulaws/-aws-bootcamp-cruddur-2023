@@ -20,4 +20,3 @@ const checkAuth = async (setUser) => {
 };
 
 export default checkAuth;
-
