@@ -37,7 +37,7 @@ export default function MessageGroupsPage() {
 
     loadData();
 
-    checkAuth(setUser);
+    CheckAuth(setUser);
 
     
   }, [])

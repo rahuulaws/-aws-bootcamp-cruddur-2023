@@ -61,7 +61,7 @@ export default function MessageGroupPage() {
 
     loadMessageGroupsData();
     loadUserShortData();
-    checkAuth(setUser);
+    CheckAuth(setUser);
   }, [])
   return (
     <article>
