@@ -1,9 +1,10 @@
 import './MessageGroupsPage.css';
 import React from "react";
 
-import DesktopNavigation  from '../components/DesktopNavigation';
+import DesktopNavigation from '../components/DesktopNavigation';
 import MessageGroupFeed from '../components/MessageGroupFeed';
 import CheckAuth from '../lib/CheckAuth';
+
 export default function MessageGroupsPage() {
   const [messageGroups, setMessageGroups] = React.useState([]);
   const [popped, setPopped] = React.useState([]);
@@ -22,6 +23,10 @@ export default function MessageGroupsPage() {
       let resJson = await res.json();
       if (res.status === 200) {
         setMessageGroups(resJson)
+      } else if (res.status === 401) {
+        console.log('Authentication token is invalid');
+      } else if (res.status === 403) {
+        console.log('You do not have permission to access this resource');
       } else {
         console.log(res)
       }
@@ -30,7 +35,7 @@ export default function MessageGroupsPage() {
     }
   };  
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
@@ -38,9 +43,8 @@ export default function MessageGroupsPage() {
     loadData();
 
     CheckAuth(setUser);
-
-    
   }, [])
+
   return (
     <article>
       <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
@@ -51,4 +55,4 @@ export default function MessageGroupsPage() {
       </div>
     </article>
   );
-} 
+}
