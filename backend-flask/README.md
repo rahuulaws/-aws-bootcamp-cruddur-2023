@@ -22,3 +22,13 @@ source venv/bin/activate
 ```
 pip install flask
 ```
+
+
+
+"loadBalancers": [
+      {
+          "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:881652387149:targetgroup/cruddur-frontend-react-js/1f0087e794cf54c7",
+          "containerName": "frontend-react-js",
+          "containerPort": 3000
+      }
+    ],
