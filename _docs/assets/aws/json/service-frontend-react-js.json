@@ -11,6 +11,8 @@
           "containerPort": 3000
       }
     ],
+
+
     "networkConfiguration": {
       "awsvpcConfiguration": {
         "assignPublicIp": "ENABLED",
