@@ -1,4 +1,4 @@
-# Base Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Base Image
 FROM node:16.18 AS build
 
 ARG REACT_APP_BACKEND_URL
@@ -18,7 +18,7 @@ WORKDIR /frontend-react-js
 RUN npm install
 RUN npm run build
 
-# New Base Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# New Base Image
 FROM nginx:1.23.3-alpine
 
 # --from build is coming from the Base Image
