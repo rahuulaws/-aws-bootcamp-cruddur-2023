@@ -2,8 +2,15 @@
 
 require 'erb'
 
+puts "Generating backend-flask.env..."
+
 template = File.read '/workspace/-aws-bootcamp-cruddur-2023/backend-flask/bin/erb/backend-flask.env.erb'
+puts "Loaded template from /workspace/-aws-bootcamp-cruddur-2023/backend-flask/bin/erb/backend-flask.env.erb"
+
 content = ERB.new(template).result(binding)
+puts "Generated content for backend-flask.env"
+
 filename = "backend-flask.env"
 File.write(filename, content)
 
+puts "Wrote content to backend-flask.env"
