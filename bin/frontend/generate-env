@@ -4,8 +4,8 @@ require 'erb'
 
 puts "Generating frontend-react-js.env..."
 
-template = File.read '/workspace/-aws-bootcamp-cruddur-2023/backend-flask/bin/erb/frontend-react-js.env.erb'
-puts "Loaded template from /workspace/-aws-bootcamp-cruddur-2023/backend-flask/bin/erb/frontend-react-js.env.erb"
+template = File.read '/workspace/-aws-bootcamp-cruddur-2023/bin/erb/frontend-react-js.env.erb'
+puts "Loaded template from /workspace/-aws-bootcamp-cruddur-2023/bin/erb/frontend-react-js.env.erb"
 
 content = ERB.new(template).result(binding)
 puts "Generated content for frontend-react-js.env"
