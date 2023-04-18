@@ -37,12 +37,12 @@ export default function HomeFeedPage() {
       console.log(err);
     }
   };
+  
   React.useEffect(()=>{
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     loadData();
-    checkAuth();
     checkAuth(setUser);
   }, [])
   return (
@@ -50,7 +50,6 @@ export default function HomeFeedPage() {
       <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
       <div className='content'>
         <ActivityForm  
-          user_handle={user}
           popped={popped}
           setPopped={setPopped} 
           setActivities={setActivities} 

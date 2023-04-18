@@ -4,19 +4,15 @@ import process from 'process';
 import { json, useParams } from 'react-router-dom';
 import {getAccessToken} from '../lib/CheckAuth';
 
-
-
 export default function ActivityForm(props) {
   const [count, setCount] = React.useState(0);
   const [message, setMessage] = React.useState('');
   const params = useParams();
-
   const classes = []
   classes.push('count')
   if (1024-count < 0){
     classes.push('err')
   }
-
   const onsubmit = async (event) => {
     event.preventDefault();
     try {
@@ -28,23 +24,21 @@ export default function ActivityForm(props) {
       } else {
         json.message_group_uuid = params.message_group_uuid
       }
-       await getAccessToken()
-       const access_token = localStorage.getItem("access_token")
-       const res = await fetch(backend_url, {
+
+      await getAccessToken()
+      const access_token = localStorage.getItem("access_token")
+      const res = await fetch(backend_url, {
         method: "POST",
         headers: {
-          
-          'Authorization': `Bearer ${access_token}`,
 
+          'Authorization': `Bearer ${access_token}`,
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-
         body: JSON.stringify(json)
       });
       let data = await res.json();
       if (res.status === 200) {
-
         console.log('data:',data)
         if (data.message_group_uuid) {
           console.log('redirect to message group')
@@ -59,24 +53,25 @@ export default function ActivityForm(props) {
       console.log(err);
     }
   }
-
   const textarea_onchange = (event) => {
     setCount(event.target.value.length);
     setMessage(event.target.value);
   }
-
   return (
     <form 
       className='message_form'
-      onSubmit={onsubmit}>
+      onSubmit={onsubmit}
+    >
       <textarea
-        onChange={textarea_onchange}
-        placeholder="Type your message here..."
-        maxLength={1024}
-        required
+        type="text"
+        placeholder="send a direct message..."
+        value={message}
+        onChange={textarea_onchange} 
       />
-      <div className={classes.join(' ')}>{count} / 1024</div>
-      <button type="submit">Send</button>
+      <div className='submit'>
+        <div className={classes.join(' ')}>{1024-count}</div>
+        <button type='submit'>Message</button>
+      </div>
     </form>
   );
 }

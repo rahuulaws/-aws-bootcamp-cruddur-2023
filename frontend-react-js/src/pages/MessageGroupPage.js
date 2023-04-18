@@ -1,13 +1,12 @@
 import './MessageGroupPage.css';
 import React from "react";
 import { useParams } from 'react-router-dom';
+
+import {checkAuth, getAccessToken} from '../lib/CheckAuth';
 import DesktopNavigation  from '../components/DesktopNavigation';
 import MessageGroupFeed from '../components/MessageGroupFeed';
 import MessagesFeed from '../components/MessageFeed';
 import MessagesForm from '../components/MessageForm';
-
-import {checkAuth, getAccessToken} from '../lib/CheckAuth';
-
 export default function MessageGroupPage() {
   const [messageGroups, setMessageGroups] = React.useState([]);
   const [messages, setMessages] = React.useState([]);
@@ -22,7 +21,6 @@ export default function MessageGroupPage() {
       const access_token = localStorage.getItem("access_token")
       const res = await fetch(backend_url, {
         headers: {
-
 
           Authorization: `Bearer ${access_token}`
         },
@@ -80,4 +78,4 @@ export default function MessageGroupPage() {
       </div>
     </article>
   );
-}
+} 
