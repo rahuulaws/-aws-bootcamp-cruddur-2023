@@ -27,7 +27,7 @@
         "name": "backend-flask",
         "image": "881652387149.dkr.ecr.us-east-1.amazonaws.com/backend-flask", 
         "essential": true,
-        
+       
         "portMappings": [
           {
             "name": "backend-flask",
