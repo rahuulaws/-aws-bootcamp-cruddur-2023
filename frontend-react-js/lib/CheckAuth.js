@@ -17,6 +17,7 @@ export async function checkAuth(setUser){
     // request to Cognito to get the latest user data
     bypassCache: false 
   })
+
   .then((cognito_user) => {
     console.log('cognito_user',cognito_user);
     setUser({
@@ -29,4 +30,5 @@ export async function checkAuth(setUser){
       localStorage.setItem("access_token", cognito_user_session.accessToken.jwtToken)
   })
   .catch((err) => console.log(err));
+  
 };

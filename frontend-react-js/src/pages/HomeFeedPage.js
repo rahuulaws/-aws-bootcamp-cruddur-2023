@@ -1,11 +1,11 @@
 import './HomeFeedPage.css';
 import React from "react";
-
 import DesktopNavigation  from '../components/DesktopNavigation';
 import DesktopSidebar     from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
+
 import {checkAuth, getAccessToken} from '../lib/CheckAuth';
 
 export default function HomeFeedPage() {
@@ -15,7 +15,6 @@ export default function HomeFeedPage() {
   const [replyActivity, setReplyActivity] = React.useState({});
   const [user, setUser] = React.useState(null);
   const dataFetchedRef = React.useRef(false);
-
   const loadData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
@@ -23,6 +22,7 @@ export default function HomeFeedPage() {
       const access_token = localStorage.getItem("access_token")
       const res = await fetch(backend_url, {
         headers: {
+
           Authorization: `Bearer ${access_token}`
         },
         method: "GET"
@@ -37,18 +37,14 @@ export default function HomeFeedPage() {
       console.log(err);
     }
   };
-
-
   
   React.useEffect(()=>{
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
-
     loadData();
     checkAuth(setUser);
   }, [])
-
   return (
     <article>
       <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
