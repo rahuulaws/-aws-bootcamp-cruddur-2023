@@ -59,8 +59,9 @@ class Db:
 #################################
 #################################
     # Main Commit function to execute a QUERY
-    def query_commit(self, sql, params={}):
-        self.print_sql('commit with returning', sql,params)
+    def query_commit(self, sql, params={}, verbose=True):
+        if verbose:
+            self.print_sql('commit with returning', sql, params)
         # we want to commit data such as an insert
         # be sure to check for RETURNING in all uppercases
         pattern = r"\bRETURNING\b"
@@ -80,8 +81,9 @@ class Db:
 
     # when we want to return a json object
 
-    def query_array_json(self, sql, params={}):
-        self.print_sql('array', sql,params)
+    def query_array_json(self, sql, params={}, verbose=True):
+        if verbose:
+            self.print_sql('array', sql, params)
 
         wrapped_sql = self.query_wrap_array(sql)
         with self.pool.connection() as conn:
@@ -91,9 +93,11 @@ class Db:
                 return json[0]
 
     # When we want to return an array of json objects
-    def query_object_json(self, sql, params={}):
-        self.print_sql('json', sql,params)
-        self.print_params(params)
+    def query_object_json(self, sql, params={}, verbose=True):
+        if verbose:
+            self.print_sql('json', sql, params)
+            self.print_params(params)
+
         wrapped_sql = self.query_wrap_object(sql)
 
         with self.pool.connection() as conn:
@@ -105,8 +109,10 @@ class Db:
                    
                 else:
                     return json[0]
-    def query_value(self,sql,params={}):
-        self.print_sql('value',sql,params)
+    def query_value(self, sql, params={}, verbose=True):
+        if verbose:
+            self.print_sql('value', sql, params)
+            
         with self.pool.connection() as conn:
              with conn.cursor() as cur:
                   cur.execute(sql,params)
