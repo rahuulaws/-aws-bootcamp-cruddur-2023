@@ -46,4 +46,3 @@ def handler(event:, context:)
     }
   end # if 
 end # def handler
-
