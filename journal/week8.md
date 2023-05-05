@@ -32,14 +32,29 @@
   - An A- Record is created with a sub domain - assets.cloudnoww.com with Alias pointed towards CloudFront distribution
   - My profile image can be accessed through https://assets.cloudnoww.com/avatars/data.jpg
   - Invalidation feature of CDN can be configured by using the object path /avatars/* to deliver the updated avatar images uploaded by the consumer. 
+
+ ![Cloudfrontimage](https://user-images.githubusercontent.com/77395830/236408121-8738d768-dc80-4f84-8e56-facb9e655c54.jpg)
+
+
+  ### Implement Users Profile Page and Database Migrations
   
-  ![cdnoutput](https://user-images.githubusercontent.com/77395830/236403295-a2c5fddc-7a3e-47db-bedc-83be50720307.jpg)
+   - Relevant scripts are updated and new ones created where required in backend-flask and frontend-react-js 
+   - A new column called bio will be created because the Postgres DB did not have the column for saving a brief about the user - a bio, we need to run scripts for
+     migration so that user can write a brief about themselves and update as when required.
+     
+     
+     ![Migrate](https://user-images.githubusercontent.com/77395830/236409994-6b06f8f3-1e42-49b5-b862-b3e7aa8e4da5.jpg)
+     
+     
+   ### Implement Avatar uploading
+   
+   - We want to allow users of our app to update their profile image and this is achieved by generating an pre-signed url invoked through an API Gateway endpoint by
+     allowing them to upload image in an S3 bucket - cloudnoww-cruddur-uploaded-avatars from where the processing image workflow kicks in to deliver the image to the
+     S3 bucket -assets.cloudnoww.com.
+   - Lambda functions are created along with routes in API Gateway to ensure the above happens
 
-  - domain_name>In order to visit https://assets.<your_domain_name>/avatars/data.jpg to see the processed image, we need to create a record via Route 53:Amazon CloudFront is designed to work seamlessly with S3 to serve your S3 content in a faster way. Also, using CloudFront to serve s3 content gives you a lot more flexibility and control. To create a CloudFront distribution, a certificate in the us-east-1 zone for *.<your_domain_name> is required. If you don't have one yet, create one via AWS Certificate Manager, and click "Create records in Route 53" after the certificate is issued.
 
 
+   ![Final1](https://user-images.githubusercontent.com/77395830/236413480-10e18aea-5c21-485e-b6e0-11aa8f028dc2.jpg)
 
- 
-ctoring of scripts and making the code user friendly was a great experience but extremely heavy one for me who has a Zero background in coding. 
- - ChatGPT and Bootcampers on Discord once again helped me to get through this week.
- - As they say, the proof of pudding is in eating and using my own domain name to access Cruddur application was a highlight for me. 
+     
