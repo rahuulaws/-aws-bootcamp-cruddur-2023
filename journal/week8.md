@@ -33,8 +33,6 @@
   - My profile image can be accessed through https://assets.cloudnoww.com/avatars/data.jpg
   - Invalidation feature of CDN can be configured by using the object path /avatars/* to deliver the updated avatar images uploaded by the consumer. 
 
- ![Cloudfrontimage](https://user-images.githubusercontent.com/77395830/236408121-8738d768-dc80-4f84-8e56-facb9e655c54.jpg)
-
 
   ### Implement Users Profile Page and Database Migrations
   
