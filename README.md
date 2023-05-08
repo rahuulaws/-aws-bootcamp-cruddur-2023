@@ -32,12 +32,3 @@ The `/journal` directory contains
 - [ ] [Week 12](journal/week12.md)
 - [ ] [Week 13](journal/week13.md)
 
-
-
-"loadBalancers": [
-      {
-          "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:881652387149:targetgroup/cruddur-frontend-react-js/8de5c2d387521cfd",
-          "containerName": "frontend-react-js",
-          "containerPort": 3000
-      }
-    ],
