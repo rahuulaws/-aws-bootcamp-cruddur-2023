@@ -1,7 +1,7 @@
 # Week 9 — CI/CD with CodePipeline, CodeBuild and CodeDeploy
 
  - Completed the Tasks listed out for the Week. 
- - Got an opportunity to work with AWS CDK, Typescript along with other AWS services at a very detailed level to serve an image through the application. 
+ - Got an opportunity to work with AWS Code Build abd AWS Code Pipeline in a real environment. 
  - This was the first week, where support from ChatGPT and Bootcampers on Discord was not required for me to go through the week.
 
  
