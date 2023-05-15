@@ -1,0 +1,9 @@
+[deploy]
+bucket = 'cfn-artifacts-cloud-bootcamp'
+region = 'us-east-1'
+stack_name = 'CrdFrontend'
+
+[parameters]
+CertificateArn = 'arn:aws:acm:us-east-1:881652387149:certificate/aa888fb5-12b2-41c4-b9d9-7bb9a3fd292d'
+WwwBucketName = 'www.cloudnoww.com'
+RootBucketName = 'cloudnoww.com'
