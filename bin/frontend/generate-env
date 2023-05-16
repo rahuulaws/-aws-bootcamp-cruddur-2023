@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
+#!/usr/bin/env ruby
+
 require 'erb'
 
-puts "Generating frontend-react-js.env..."
-
-template = File.read '/workspace/-aws-bootcamp-cruddur-2023/bin/erb/frontend-react-js.env.erb'
+# Generating frontend-react-js.env
+template = File.read('/workspace/-aws-bootcamp-cruddur-2023/bin/erb/frontend-react-js.env.erb')
 puts "Loaded template from /workspace/-aws-bootcamp-cruddur-2023/bin/erb/frontend-react-js.env.erb"
 
 content = ERB.new(template).result(binding)
@@ -12,6 +13,15 @@ puts "Generated content for frontend-react-js.env"
 
 filename = "frontend-react-js.env"
 File.write(filename, content)
-
 puts "Wrote content to frontend-react-js.env"
 
+# Generating sync.env
+template_sync = File.read('/workspace/-aws-bootcamp-cruddur-2023/bin/erb/sync.env.erb')
+puts "Loaded template from /workspace/-aws-bootcamp-cruddur-2023/bin/erb/sync.env.erb"
+
+content_sync = ERB.new(template_sync).result(binding)
+puts "Generated content for sync.env"
+
+filename_sync = "sync.env"
+File.write(filename_sync, content_sync)
+puts "Wrote content to sync.env"
