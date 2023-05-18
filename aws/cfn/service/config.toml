@@ -3,5 +3,6 @@ bucket = "cfn-artifacts-cloud-bootcamp"
 region = 'us-east-1'
 stack_name = 'CrdSrvBackendFlask'
 
+[parameters]
 EnvFrontendUrl = 'https://cloudnoww.com'
 EnvBackendUrl = 'https://api.cloudnoww.com'
