@@ -1,0 +1,10 @@
+[deploy]
+bucket = 'cfn-artifacts-cloud-bootcamp'
+region = 'us-east-1'
+stack_name = 'CrdDb'
+
+[parameters]
+NetworkingStack = 'CrdNet'
+ClusterStack = 'CrdCluster'
+MasterUsername = 'cruddurroot'
+

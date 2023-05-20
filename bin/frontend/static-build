@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+FRONTEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $FRONTEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+FRONTEND_REACT_JS_PATH="$PROJECT_PATH/frontend-react-js"
+
+cd $FRONTEND_REACT_JS_PATH
+
+REACT_APP_BACKEND_URL="https://api.cloudnoww.com" \
+REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
+REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
+REACT_APP_AWS_USER_POOLS_ID="us-east-1_1P8HDMxzW" \
+REACT_APP_CLIENT_ID="6vd6cd42sutct7v0m6e3udljri" \
+npm run build

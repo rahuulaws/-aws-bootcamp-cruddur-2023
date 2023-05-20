@@ -1,4 +1,4 @@
-# Week 0 — Billing and Architecture
+# Billing and Architecture
 
 
 ## Required Homework
