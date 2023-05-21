@@ -16,3 +16,6 @@ def init_cloudwatch(response):
   LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
   return response
   
+  #@app.after_request
+  #def after_request(response):
+  #  init_cloudwatch(response)
