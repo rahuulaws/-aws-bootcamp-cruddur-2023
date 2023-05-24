@@ -31,11 +31,13 @@ export default function ActivityItem(props) {
     attrs.onClick = click
   }
 
+  attrs.className = 'activity_item clickable'
+  attrs.onClick = click
+
   return (
     <div {...attrs}>
       <div className="acitivty_main">
         <ActivityContent activity={props.activity} />
-        {expanded_meta}
         <div className="activity_actions">
           <ActivityActionReply setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count={props.activity.replies_count}/>
           <ActivityActionRepost activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
