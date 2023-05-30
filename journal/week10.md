@@ -141,7 +141,7 @@
      - DBSubnetGroup
   - Config.toml file which has key configuration details such as the name of the stack -CrdDb, region of deployment, S3 Bucketname amd parameters such as the name of Neworking and Clsuter stack along with the
    MasterUsername for RDS are referenced by the CFN template.
- - set the env var for MasterUserPassword in gitpod
+ - set the env var for MasterUserPassword of RDS in gitpod
  - Bash script kept under the path ./bin/cfn/db is run which deploys the CFN template with aws cli command.
 
 ![CFN_RDS](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/a0416bf0-c2ce-44da-b369-2d6e7a1a7050)
@@ -249,4 +249,47 @@
 
 
 ![Codepipeline Visualization](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/9901ab32-a32e-494d-9243-50a8f977f0c5)
+
+
+### Static Website Hosting Frontend using Cloudformation template
+
+ - We started off by creating a frontend folder under cfn with the path aws/cfn/frontend
+ - Created CFN template and put in the above path to deploy the following
+     - CloudFront Distribution
+     - S3 Bucket for www.
+     - S3 Bucket for naked domain
+     - Bucket Policy
+ 
+ - Config.toml file which has key configuration details such as the name of the stack -CrdFrontend , region of deployment, S3 Bucketname and the following parameters are set 
+     - CertificateArn = 'arn:aws:acm:us-east-1:881652387149:certificate/aa888fb5-12b2-41c4-b9d9-7bb9a3fd292d'
+     - WwwBucketName = 'www.cloudnoww.com'
+     - RootBucketName = 'cloudnoww.com'  
+     - Remove the Type A record from the Route53 for the rootdomainname.
+    - Bash script kept under the path ./bin/cfn/frontend is run which deploys the CFN template with aws cli command.
+     
+     
+  ![CFNFrontendDetails](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/2dcaf817-e144-454c-bf60-4e4801fc2ede)
+
+
+  ![CFNFrontendResources](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/865293cf-a695-4a64-89f9-8df510c3124f)
+
+
+  ![CFNFrontendParameters](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/1312b640-f35d-47a2-99b7-8ed6848e76dc)
+
+
+  ![CloudfrontCFN](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/22ae7157-eb44-4fb0-803a-68b276285c51)
+
+
+  ![CloudfrontCFNDetails](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/ee83e50f-15ab-4987-9adb-66323521d552)
+
+
+  ![Route53CFN](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/dc2feed0-f27c-401d-a8d1-c5e602d63eb4)
+
+
+  ![S3Bucket](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/81402373-035e-4c9b-884a-130713be74fc)
+
+
+
+
+
 
