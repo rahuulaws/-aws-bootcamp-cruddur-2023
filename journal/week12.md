@@ -2,7 +2,21 @@
 
 ### Sync tool for static website hosting
 
- - We started off by creating a bash script file - static build. Details as below. It is executed manually by changing directory in gitpod terminal to the front-react-js path.
+### Context and Background 
+
+ - We have used CFN Template to provision the following resurces in AWS under the Static Website Hosting as a Frontend activity.
+
+        -CloudFront Distribution (https://di38zz9ba2r5u.cloudfront.net) mapped to Public S3 Bucket : cloudnoww.com as an Origin
+        -S3 Bucket for www : www.cloudnoww.com 
+        -S3 Bucket for naked domain : cloudnoww.com
+        -RootBucketDomain : cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
+        -WwwBucketDomain : www.cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
+        -Bucket Policy                
+                 
+ - We now need a way to sync any changes that are made to the frontend files to the Public s3 Bucket - cloudnoww.com which is the origin for the Cloudfront distribution. 
+ - Sync Tool for static website hosting is the antidote for achieving the challenge of moving changes in frontend files to S3. 
+         
+ - In view of the above, we started off by creating a bash script file - static build. Details as below. It is executed manually by changing directory in gitpod terminal to the front-react-js path.
  - The error free bash script is run in the following path ./bin/frontend/static-build
         #! /usr/bin/bash
 
@@ -163,4 +177,243 @@
   
  - The CrdSync Role ARN :  arn:aws:iam::881652387149:role/CrdSyncRole-Role-L7O62EBAFN5H is copied in the  sync.yaml file at the path ./github/workflows/sync.yaml 
  - Documents which were referenced are : github actions github_action_configure-aws-credentials
+
+### Reconnect Database and Post Confirmation Lambda
+
+  - We have so far synced the frontend files to the Public s3 Bucket - cloudnoww.com which is the origin for the Cloudfront distribution. 
+  - Now we need to connect the RDS Database - cruddur-cfninstance, that was created through the CFN Template.
+  - The CFN CICD is edited to take serviceName:backend-flask and we also take a decision on using a cross- stack name. 
+  - Execute the CFN CICD by running the bash script at the path . /bin/cfn/cicd and post which Execute the CFN service stack by running the bash script at the path ./bin/cfn/service. 
+  - It is a good practice to test locally and it is done by editing the docker-compose.yaml file to point to  - Dockerfile.prod for the build in service: backend-flask
+  - After starting the application by doing docker compose up, the backend-flask is checked in any web browser through api/activities/home
+  - The following error message is seen.
+  
+   ![InternalServerError](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/4c4e03c3-835b-4954-ad45-defe6c3e3083)
+
+ 
+  - We now need to build the backend-flask docker file pointing to Dockerfile.prod through the bash script at the path ./bin/backend/build
+           
+           
+             #! /usr/bin/bash
+
+            ABS_PATH=$(readlink -f "$0")
+            BACKEND_PATH=$(dirname $ABS_PATH)
+            BIN_PATH=$(dirname $BACKEND_PATH)
+            PROJECT_PATH=$(dirname $BIN_PATH)
+            BACKEND_FLASK_PATH="$PROJECT_PATH/backend-flask"
+
+            docker build \
+            -f "$BACKEND_FLASK_PATH/Dockerfile.prod" \
+            -t backend-flask-prod \
+            "$BACKEND_FLASK_PATH/."
+ 
+     - After pushing the new backend-flask image to ECR, we execute CFN service by running the bash script at the path ./bin/cfn/service and ensuring the ECS : backend-flask service is working fine. 
+     - We check the backend-flask : api.cloudnoww.com/api/activities/home in any web browser and observe the following error.
+ 
+       ![upstreamrequest](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/09193106-d7ed-44c0-a989-7f31c1a3eefe)
+   
+     - We need to ensure that the prod_connection url is reaching out to the new rds db and not the one that was created earlier. The prod_connection url will reflect as follows
+  
+       ![PRODCONNECTIONURL](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/e55a7bd4-fc4f-4016-bccb-8e64fd743183)
+
+    - The Security Group for New RDS - cruddur-cfninstance, is edited to allow Inbound access for Gitpod terminal even on new workspace being used by using curl ifconfig.me and ./bin/rds/update-sg-rule. 
+    - Now we connect to the New RDS DB - cruddur-cfninstance, using ./bin/db/connect prod, followed by schema-load by using the bash script at the path running ./bin/db/schema-load prod
+    - Run the migrate script. CONNECTION_URL=$PROD_CONNECTION_URL ./bin/db/migrate ( this is done to override the connection url to prod connection url)
+    - Redeployed the edited CFN Frontend stack through the bash script at the path ./bin/cfn/frontend to address the errors that came up. 
+  
+ ### Modify the lambda function cruddur-post-confirmation to connect to the New RDS DB : cruddur-cfninstance
+   - The Lambda Function - cruddur-post-confirmation is invoked through the AWS Cognito which is used when a new user sign up or an existing user sign in to the web application. 
+   - The following change are implemented in the Lambda Function - cruddur-post-confirmation so that it connects to the New RDS DB : cruddur-cfninstance.
+      - Edited the connection url in env var to cruddur-cfninstance.
+      
+       ![LambdaPostConfirmationEnvr](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/cacd7eb8-2a8b-4dbf-96c4-ba4615a8b9ab)
+
+      - A New SG : CognitoLambdaSG is created containing ONLY an Outbound Rule with ALLTRAFFIC 0.0.0.0/0 and no rules on Inbound and attach the Lambda Function to the New VPC : CrdNetVPC created through CFN so
+       that Lambda Function can access the New RDS DB : cruddur-cfninstance, which is also attached to VPC : CrdNetVPC.
+       
+       ![LambdaPostConfirmationVPC](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/82cbd8ac-0564-414a-8749-6ec3c69be023)
+
+           
+      - The Lambda code is modified since the data insertion into RDS is not happening. The Key change amongst others being editing : cur.execute(sql,*params) to cur.execute(sql,params).
+  
+                                      import json
+                                      import psycopg2
+                                      import os
+
+                                      def lambda_handler(event, context):
+                                          user = event['request']['userAttributes']
+                                          print('userAttributes')
+                                          print(user)
+                                          user_display_name = user['name']
+                                          user_email = user['email']
+                                          user_handle = user['preferred_username']
+                                          cognito_user_id = user['sub']
+
+                                          conn = None
+
+                                          try:
+                                              print('entered-try')
+                                              sql = """
+                                                  INSERT INTO public.users (
+                                                      display_name,
+                                                      email,
+                                                      handle,
+                                                      cognito_user_id
+                                                  )
+                                                  VALUES (
+                                                      %(display_name)s,
+                                                      %(email)s,
+                                                      %(handle)s,
+                                                      %(cognito_user_id)s
+                                                  )
+                                              """
+                                              print('SQL Statement ----')
+                                              print(sql)
+
+                                              conn = psycopg2.connect(os.getenv('CONNECTION_URL'))
+                                              cur = conn.cursor()
+                                              params = {
+                                                  'display_name': user_display_name,
+                                                  'email': user_email,
+                                                  'handle': user_handle,
+                                                  'cognito_user_id': cognito_user_id
+                                              }
+                                              cur.execute(sql, params) <--------------------- this was changed
+                                              conn.commit()
+
+                                          except (Exception, psycopg2.DatabaseError) as error:
+                                              print('error:')
+                                              print(error)
+
+                                          finally:
+                                              if conn is not None:
+                                                  cur.close()
+                                                  conn.close()
+                                                  print('Database connection closed.')
+                                              else:
+                                                  print('No connection to close.')
+
+                                          return event
+
+  
+  ### Crudding !! 
+
+  ![Afterlogin](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/2df94bc4-e12e-48b4-8157-076dc859c617)
+
+
+  
+  ### Use CORS for Service
+  
+  - The parameters - EnvFrontendUrl = 'https://cloudnoww.com' and  EnvBackendUrl = 'https://api.cloudnoww.com' are passed to the CFN Service stack by updating the config.tom at the path ./aws/cfn/service/config.toml
+  - Subsequently the bashscript is updated at the path ./bin/cfn/service so that the parameters can be passed to the CFN Service stack
+
+                                      #! /usr/bin/env bash
+                                      set -e # stop the execution of the script if it fails
+
+                                      CFN_PATH="/workspace/-aws-bootcamp-cruddur-2023/aws/cfn/service/template.yaml"
+                                      CONFIG_PATH="/workspace/-aws-bootcamp-cruddur-2023/aws/cfn/service/config.toml"
+
+                                      echo $CFN_PATH
+
+                                      cfn-lint $CFN_PATH
+
+                                      BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+                                      REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+                                      STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+                                      PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+
+                                      aws cloudformation deploy \
+                                        --stack-name $STACK_NAME \
+                                        --s3-bucket $BUCKET \
+                                        --s3-prefix backend-service \
+                                        --region $REGION \
+                                        --template-file "$CFN_PATH" \
+                                        --no-execute-changeset \
+                                        --tags group=cruddur-backend-flask \
+                                        --parameter-overrides $PARAMETERS \
+                                        --capabilities CAPABILITY_NAMED_IAM
+
+  - The Service stack is executed again by running the script at the path ./bin/cfn/service and one can now se the envr being passed in the parameters.
+
+    ![BackebdFlaskEnvr](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/400fd861-34e5-4778-b60b-ee82d1c59866)
+
+
+ ### CICD Pipeline and Create Activity
+ 
+ - We create another cognito user by signing up in the application and post which we make a Crud message with the new cognito user.
+ - The Crud messsage by the new cognito user is not reflecting with the name of the new cognito user but of an hardcoded vaue that must be changed in Activitiyform.js file.
+ - We also conduct a test with the new cognito user in the local development environment by connecting with local postgres db and the same is done by pointing Dockerfile to local db by making relevant changes 
+   in the docker-compose.yaml file and get it into run by doing docker compose up.
+ - We seed the data into local db by executing the file at the path ./bin/db/setup and we update the cognito_user_id by running the script at the path ./bin/db/update_cognito_user_ids 
+ - Changes needed to be done in the Activityform.js to pass the bearer token so that message sent by the new cognito user reflects under their name. 
+  
+  ![Newuser](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/207b80ac-65df-4142-b70c-49e2367347e1)
+  
+  - We want to check now whether the changes can be rolled out by using the CICD pipeline created by CFN Template.
+  - A pull request is made in Github by merging GitHubBranch : Production into Main branch of Github which builds and deploy through the CICD workflow created by CFN Template which is listening into the changes in my 
+    Github repo - rahuulaws/-aws-bootcamp-cruddur-2023.
+  - Errors encountered during the CICD run are addressed by doing the following
+        
+        - changing the parameters :  GithubRepo = 'rahuulaws/-aws-bootcamp-cruddur-2023' in config.toml at the path aws/cfn/cicd/config.toml
+        - changing the code build name in the codebuild.yaml file on the path aws/cfn/cicd/nested/codebuild.yaml and the template.yaml file on the path aws/cfn/cicd/template.yaml
+   
+   ![cicd](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/1ec45ee0-208e-4c96-a726-536f528db4b3)
+   
+   
+   ![Screenshot 2023-05-20 234459](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/61c603df-d31c-4dd2-8d1c-010ffd5b7549) 
+  
+  
+   ![Homepage](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/001d0d21-1124-46b5-b5b1-905e2209d83c)
+
+### Refactor JWT to use a decorator
+
+ - The replyform.js is modified so that the reply box for a Crud message closes when it is clicked outside of the box, based on the on the reply_popup onclick
+
+   ![Reply](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/293d0f00-60ba-479a-b24f-ab163b259187)
+   
+   ![ReplyMessage](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/2c2c0f59-5bc1-486a-8a25-2083c7581aec)
+
+ - We decide to use Decorators as a design pattern, which are explained below
+ 
+          - Decorators provide a flexible and modular way to extend or modify the functionality of existing code without the need to change its implementation directly. 
+          - They promote code reuse and separation of concerns, making the code more maintainable and easier to understand.
+          - To summarize, decorators are like add-ons or wrappers that allow us to modify or enhance the behavior of existing objects or functions without modifying their code directly
+          
+ - We create a decorator for JWT verification by changing the code in app.py at the path ./backend-flask/app.py and backend-flask/lib/cognito_jwt_token.py.
+ - Post the change, the web application is checked to find out whether it is working properly or not. 
+   
+   ![PostDecorator](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/3d821979-30ee-4118-93d7-fb4524180785)
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
