@@ -220,7 +220,7 @@
       - Codebuild used for baking container images
       - Codebuild Project
       - Codebuild Project Roled in gitpod
-      -
+      
  - Bash script kept under the path ./bin/cfn/cicd is run which deploys the CFN template with aws cli command.
  - New S3 bucket is created manually through AWS console with the name - codepipeline-cruddur-artifacts-cfn to store the artifacts. 
  
@@ -258,6 +258,8 @@
      - CloudFront Distribution
      - S3 Bucket for www.
      - S3 Bucket for naked domain
+     - RootBucketDomain
+     - WwwBucketDomain
      - Bucket Policy
  
  - Config.toml file which has key configuration details such as the name of the stack -CrdFrontend , region of deployment, S3 Bucketname and the following parameters are set 
