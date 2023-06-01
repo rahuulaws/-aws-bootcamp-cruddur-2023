@@ -6,12 +6,12 @@
 
  - We have used CFN Template to provision the following resurces in AWS under the Static Website Hosting as a Frontend activity.
 
-        -CloudFront Distribution (https://di38zz9ba2r5u.cloudfront.net) mapped to Public S3 Bucket : cloudnoww.com as an Origin
-        -S3 Bucket for www : www.cloudnoww.com 
-        -S3 Bucket for naked domain : cloudnoww.com
-        -RootBucketDomain : cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
-        -WwwBucketDomain : www.cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
-        -Bucket Policy                
+     - CloudFront Distribution (https://di38zz9ba2r5u.cloudfront.net) mapped to Public S3 Bucket : cloudnoww.com as an Origin
+     - S3 Bucket for www : www.cloudnoww.com 
+     - S3 Bucket for naked domain : cloudnoww.com
+     - RootBucketDomain : cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
+     - WwwBucketDomain : www.cloudnoww.com ,which is mapped to the above Cloudfront distribution (https://di38zz9ba2r5u.cloudfront.net)
+     - Bucket Policy                
                  
  - We now need a way to sync any changes that are made to the frontend files to the Public s3 Bucket - cloudnoww.com which is the origin for the Cloudfront distribution. 
  - Sync Tool for static website hosting is the antidote for achieving the challenge of moving changes in frontend files to S3. 
@@ -374,31 +374,150 @@
    
    ![ReplyMessage](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/2c2c0f59-5bc1-486a-8a25-2083c7581aec)
 
- - We decide to use Decorators as a design pattern, which are explained below
+ - We decide to use Decorators as a design pattern, which are explained below. Please note that I have used ChatGPT for the below explaination.
  
-          - Decorators provide a flexible and modular way to extend or modify the functionality of existing code without the need to change its implementation directly. 
-          - They promote code reuse and separation of concerns, making the code more maintainable and easier to understand.
-          - To summarize, decorators are like add-ons or wrappers that allow us to modify or enhance the behavior of existing objects or functions without modifying their code directly
+     - Decorators provide a flexible and modular way to extend or modify the functionality of existing code without the need to change its implementation directly. 
+     - They promote code reuse and separation of concerns, making the code more maintainable and easier to understand.
+     - To summarize, decorators are like add-ons or wrappers that allow us to modify or enhance the behavior of existing objects or functions without modifying their code directly
           
  - We create a decorator for JWT verification by changing the code in app.py at the path ./backend-flask/app.py and backend-flask/lib/cognito_jwt_token.py.
  - Post the change, the web application is checked to find out whether it is working properly or not. 
    
    ![PostDecorator](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/3d821979-30ee-4118-93d7-fb4524180785)
 
+
+### Refactor AppPy
+
+- We decide to Refactor the app.py and also use chaining which is explained below. Please note that I have used ChatGPT for the below explaination.
  
+     - Refactoring mean making changes to an existing code to improve its structure, readability, and maintainability without altering its functionality. 
+     - Refactoring helps make our code cleaner, easier to understand, and easier to modify in the future.
+         
+     - Chaining in Python refers to the practice of connecting multiple operations or methods together in a sequence and makes our code more concise and readable because it allows us to 
+       perform multiple operations on a single line
+     - It allows us to perform a series of actions on an object or data by applying one operation after another. 
+     - It's like a chain of actions, where the output of one action becomes the input for the next one.
+     
+- We create seperate python files for different functionalities/operations performed by different services such as cloudwatch (cloudwatch.py), xray(xray.py), rollbar(rollbar.py), honeycomb(homeycomb.py), 
+  cloudwatch(cloudwatch.py) and cors(cors.py).
+- We ensured all the errors are fixed and checked the app is working properly. 
+- We also made changes in the notifications.py code to ensure that notifications page is aligned with the other pages in terms of the login details.
+
+
+![notification](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/6b7d765e-aea5-4772-9dad-044de57cc57e)
+
+  
+![Home](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/edad6c9a-c97c-4889-a3ac-917be768cb7e)
+
+
+### Refactor Flask Routes
+
+- We decide to Refactor the "Routes" in app.py and the meaning of "Routes" in contect of Flask application is explained below. Please note that I have used ChatGPT for the below explaination.
+ 
+   - In Flask applications, routes define the different web pages or URLs that users can visit. Think of routes as a map that tells our Flask application how to handle incoming requests and what content to display
+      to the user
+   - Each route corresponds to a specific URL or path, such as "/home" or "/contact". When a user enters a URL in their web browser, Flask uses the routes to determine which code or function should be executed to 
+      generate the appropriate response.
+   - Routes serve the purpose of mapping URLs to specific actions or functions in our Flask application. They help organize and structure our web application by defining the different pages or functionality available 
+      to users. 
+   - Refactoring "Routes" involves making changes to the existing route definitions to improve the structure, readability, or maintainability of our code.
+  
+- In our case, we have refactored the " Routes" by creating seperate python files for users.py, general.py, messages.py and activities.py which are referenced in the app.py through an import function as below.
+
+     - import routes.general
+     - import routes.activities
+     - import routes.users
+     - import routes.messages
+
+
+### Replies Feature in the App
+
+- When we do an inline reply to ur own message like below, we cant do it.
+
+![Reply](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/6693a16e-f40c-449c-a82a-4cf6ba639175)
+
+- We get an error message - "invalid input syntax for type integer" due to "reply_to_activitiy_uuid being" set as Integer in schema.sql
+               
+                CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+                DROP TABLE IF EXISTS public.users;
+                DROP TABLE IF EXISTS public.activities;
+                CREATE TABLE IF NOT EXISTS public.schema_information (
+                id integer UNIQUE,
+                last_successful_run text
+                );
+                INSERT INTO public.schema_information (id, last_successful_run)
+                VALUES(1, '0')
+                ON CONFLICT (id) DO NOTHING;
+                CREATE TABLE public.users (
+                uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                display_name text NOT NULL,
+                handle text NOT NULL,
+                email text NOT NULL,
+                cognito_user_id text NOT NULL,
+                created_at TIMESTAMP default current_timestamp NOT NULL
+                );
+                CREATE TABLE public.activities (
+                uuid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                user_uuid UUID not null,
+                message text NOT NULL,
+                replies_count integer DEFAULT 0,
+                reposts_count integer DEFAULT 0,
+                likes_count integer DEFAULT 0,
+                reply_to_activity_uuid integer, <----we need to run a migration to convert this columnn from integer to accept uuid
+                expires_at TIMESTAMP,
+                created_at TIMESTAMP default current_timestamp NOT NULL
+                );
+                     
+- We run the command ./bin/generate/migration reply_activity_uuid_to_string, which generates the migration file wherein we populate the following script to do that change and Run migrate ./bin/db/migrate to 
+  change the table with field "reply_to_activity_uuid" to convert type "integer" to "uuid"
+
+  ![MigrationScript](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/6902cf6b-8fae-403c-a964-c30f3e2dc2f5)
+  
+  ![Before and after snap of integer and uuuid](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/4c534183-6fa8-44d4-99df-219d0963f0c3)
+  
+- We check by replying to our own message and make some changes in the Activityitem.css for the replies to go inline above the main message. The local postegres db is also checked
+
+   ![replies_final](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/4f5cb4ab-bb23-423c-a905-f970f88fddb5)
+  
+- The local postegres db is also checked to see the inline message being relfected in the db. 
+
+  ![Activities](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/9937ebf9-a5ce-40e3-b143-8130d7a1c769)
+
+
+###  Refactor Error Handling and Fetch Requests
+
+- We decide to display a default message on application and on each page after one is loggedin to convey that there are no errors.
+- This is achieved by putting in conditional content on Activityfeed.js file and changes in Activityfeed.css for displaying it on the web application.
+
+![Nothingtoseehereyet](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/3db63289-7390-4471-af59-24a8fe61b03f)
+
+- We want our application to be user friendly and it should render out different error messages so that our users knows what has gone wrong and that gives an idea to them about what is expected of them.  
+- The error handling has been improved through a new file : FormErroritem.js which is referrred by different files through import function and list of errors messages are as below.
+      
+![Error Hnadling](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/ce1de5ad-75e0-4249-82bb-390d5f711454)
 
 
 
+###  Activity Show Page
+
+- The activity of migration does not currently tell us whether it is successfull or not, but as a temporary measure we moved forward by making the following changes ( first dropping the exsting column and then
+  adding a new column ) in the migrations file as below
+
+ ![integertouuid](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/3bfac75a-6fd6-4828-a5d8-a17783a2d64f)
+
+ ![inreply](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/36572584-54c3-4730-b23e-768322659d0d)
 
 
 
+###  Cleanup 
+..................................................................................
+- This is achieved by putting in conditional content on Activityfeed.js file and changes in Activityfeed.css for displaying it on the web application.
 
-
-
-
-
-
-
+- The Crud messsage by the new cognito user is not reflecting with the name of the new cognito user but of an hardcoded vaue that must be changed in Activitiyform.js file.
+- We also conduct a test with the new cognito user in the local development environment by connecting with local postgres db and the same is done by pointing Dockerfile to local db by making relevant changes 
+  in the docker-compose.yaml file and get it into run by doing docker compose up.
+- We seed the data into local db by executing the file at the path ./bin/db/setup and we update the cognito_user_id by running the script at the path ./bin/db/update_cognito_user_ids 
+- Changes needed to be done in the Activityform.js to pass the bearer token so that message sent by the new cognito user reflects under their name. 
 
 
 
