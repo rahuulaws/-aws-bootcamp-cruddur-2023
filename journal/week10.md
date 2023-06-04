@@ -7,7 +7,7 @@
 
 ### Context and Background 
  
-  - The objective of this week is to use the Infrastructure as a Code (IaC) Service : AWS Cloudformation Tool to create AWS Infrastructure and deploy the Cruddur application on it.
+  - The objective of this Two week is to use the Infrastructure as a Code (IaC) Service : AWS Cloudformation Tool to create AWS Infrastructure and deploy the Cruddur application on it.
   - Cloudformation helps us to define the desired cloud environment using code writen in either Yaml or Json, known as templates, instead of manually configuring each resource.
   - The key benefits for using AWS Cloudformation can be listed  as below : https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
     - Simplify infrastructure management
@@ -61,9 +61,16 @@
  
  ![Parameter](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/c1dcc32d-9256-4601-b09f-4105b22fc610)
 
+
  
+ ### CFN Diagramming the Network Layer
  
- ### Cluster Layer using Cloudformation template
+ https://lucid.app/lucidchart/c7d244d1-6828-476c-bf84-018094ccfcff/edit?viewport_loc=-1388%2C-438%2C3292%2C1626%2C0_0&invitationId=inv_55d53435-b0d8-40d4-b543-13a818781a36
+ 
+ ![Network Layer](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/9fdf774f-9cee-44b9-8e2f-7dd46fdb4aca)
+
+ 
+  ### Cluster Layer using Cloudformation template
   
  - We started off by creating a Cluster folder under cfn with the path aws/cfn/cluster
  - Created CFN template and put in the above path to deploy the following 
@@ -103,6 +110,14 @@
 ![BckendTG](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/10ff4ea9-ac00-4f8c-bb9a-85edb051fef0)
 
 
+### CFN Diagramming the Cluster Layer
+
+https://lucid.app/lucidchart/7e4c3054-c659-4295-a5f6-591b00345cbf/edit?viewport_loc=-2875%2C-484%2C5178%2C2439%2C0_0&invitationId=inv_d7a3157d-25ce-473c-97d2-fbc80b13dcd0
+
+![Cluster-1](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/54d488db-9a4e-4472-84d4-d2ea3d707e1f)
+
+![Cluster-2](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/19af9fe9-e26f-40f8-bec9-7375e8252adb)
+
 
 ### Service Layer using Cloudformation template
 
@@ -130,7 +145,6 @@
 ![BackendHealthCheck](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/481160a2-af5d-4ba1-83c7-2d3be81a9bbc)
 
 
-
 ### AWS RDS using Cloudformation template
 
  - We started off by creating a DB folder under cfn with the path aws/cfn/db
@@ -153,10 +167,19 @@
 ![RDS Console](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/ce7d7cdf-832d-4473-bb6e-f48283e6cda6)
 
 
-
-- The Endpoint url pf the Postgres is changed in the parameter store with the RDS RB created through CFN
+- The Endpoint url of the Postgres is changed in the parameter store with the RDS RB created through CFN
 
 ![ParameterStore](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/74b8b22f-6d75-408e-a291-866326f479ed)
+
+
+### CFN - Diagramming Service and RDS
+
+https://lucid.app/lucidchart/b1487e50-594a-49a9-ba1d-abdad40d9ebb/edit?viewport_loc=-3712%2C-3152%2C6904%2C3252%2C0_0&invitationId=inv_f74d0e01-f680-443a-bca3-106f1d02aa35
+
+
+![Service and RDS](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/ba77cb6a-156f-424a-8388-a431f1ba5b7a)
+
+
 
 ### AWS Lambda, Dynamodb and DynamoDB Streams using Serverless Application Module(SAM) Cloudformation template
 
@@ -197,6 +220,14 @@
 
 
 ![lambda-dynamodbstream](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/5741a060-dcdd-4901-a82b-dd484d9f2fa3)
+
+
+### CFN - Diagramming DynamoDB
+
+https://lucid.app/lucidchart/88412ee8-8044-4edf-bdd5-0beab842e225/edit?viewport_loc=-3492%2C-3220%2C6904%2C3252%2C0_0&invitationId=inv_21128b34-d4eb-465e-aa66-736a32c96021
+
+
+![Dynamo DB](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/19feb9fb-69bd-45b7-94e3-f67c273566dc)
 
 
 
@@ -251,6 +282,17 @@
 ![Codepipeline Visualization](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/9901ab32-a32e-494d-9243-50a8f977f0c5)
 
 
+### CFN Diagramming CICD
+
+https://lucid.app/lucidchart/488fdf65-bdde-4562-82d9-8d332ca15e56/edit?viewport_loc=-5731%2C-2494%2C10788%2C5081%2C0_0&invitationId=inv_d4f5f12a-3465-4a93-8ab6-b247363aaa7e
+
+
+![CIcd-1](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/1dba0335-e8d8-4dcc-9a5e-6463e55235b0)
+
+
+![CICD-2](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/bfea52b4-7512-445f-b0fa-53b449a6d8ce)
+
+
 ### Static Website Hosting Frontend using Cloudformation template
 
  - We started off by creating a frontend folder under cfn with the path aws/cfn/frontend
@@ -291,7 +333,12 @@
   ![S3Bucket](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/81402373-035e-4c9b-884a-130713be74fc)
 
 
+### CFN Diagramming Static Frontend
 
+https://lucid.app/lucidchart/dc8b4908-b5e1-48c0-aaef-e08c783a4adf/edit?viewport_loc=-5419%2C-4494%2C10788%2C5081%2C0_0&invitationId=inv_8ffada55-3619-4df9-998e-29ea4065c539
+
+
+![Static Frontend](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/45bfc525-6e47-47e0-9e86-7962e2d4c7a2)
 
 
 
