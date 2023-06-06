@@ -340,5 +340,3 @@ https://lucid.app/lucidchart/dc8b4908-b5e1-48c0-aaef-e08c783a4adf/edit?viewport_
 
 ![Static Frontend](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/45bfc525-6e47-47e0-9e86-7962e2d4c7a2)
 
-
-
