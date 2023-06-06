@@ -511,13 +511,7 @@
 
 ###  Cleanup 
 ..................................................................................
-- This is achieved by putting in conditional content on Activityfeed.js file and changes in Activityfeed.css for displaying it on the web application.
 
-- The Crud messsage by the new cognito user is not reflecting with the name of the new cognito user but of an hardcoded vaue that must be changed in Activitiyform.js file.
-- We also conduct a test with the new cognito user in the local development environment by connecting with local postgres db and the same is done by pointing Dockerfile to local db by making relevant changes 
-  in the docker-compose.yaml file and get it into run by doing docker compose up.
-- We seed the data into local db by executing the file at the path ./bin/db/setup and we update the cognito_user_id by running the script at the path ./bin/db/update_cognito_user_ids 
-- Changes needed to be done in the Activityform.js to pass the bearer token so that message sent by the new cognito user reflects under their name. 
 
 
 
