@@ -508,12 +508,117 @@
  ![inreply](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/36572584-54c3-4730-b23e-768322659d0d)
 
 
+###  Cleanup Part 1
 
-###  Cleanup 
+.......................................................................................
+
+...............................................................................
+
+###  Cleanup Part 2
 ..................................................................................
 
+- We check whether the AWS RDS Production DB is upto date by checking whether the "reply_to_activity_uuid" has a type which is " integer " or " uuid". Since it was still " integer" we needed to run the migration on 
+  the Prod database by running the following command.
+
+            CONNECTION_URL=$PROD_CONNECTION_URL ./bin/db/migrate ( this is done to override the connection url to prod connection url)
+ 
+- We check the whether the migration has run properly or not logging into the Prod database by the command ./bin/db/connect prod and get to see the following output where the type is changed to uuid, thereby making 
+  it possible for us to generate replies in the application.
+   
+   
+  ![migrate_prod](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/181871d3-f204-4255-9b64-28ee0da40a1d)
+ 
+ 
+- We now want to roll out the latest changes in the backend and front end application by doing the following
+- Rolling out Backend Change, we run a CICD pipeline to merge the " main" branch into "production".
+
+ ![pushchangestordsthroughcicd](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/0bcb1281-accf-40ab-96b4-7535acbef601)
 
 
+- Rolling out the frontend changes in the application is through a sync tool. 
+- The bash script file in the path  ./bin/frontend/static-build is executed after correcting the errors that we encounter and post the successfull build in whichn we get the following output in the gitpod terminal
+
+  ![static-build](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/668656ec-d45f-4a3c-a4b8-608726303471)
+
+- We then run the sync file on the path  ./bin/frontend/sync and it is executed after correcting error by doing the change of adding changeset.json in the erb/sync.env.erb file as given below 
+
+              SYNC_OUTPUT_CHANGESET_PATH=<%=  ENV['THEIA_WORKSPACE_ROOT'] %>/tmp/changeset.json
+     
+- This generates a changeset file in form of An invalidation file on the cloudfront as shared below. 
+
+  ![Cloudfront Invalidation1](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/226efe6d-1d9c-4ff3-8609-4752a415c52d)
+
+
+- We run the Production Dynamodb Database : CrdDdb-DynamoDBTable-TPSQ22XBXP1B in the local environment to check whether it runs properly or not before running it in Production environment after making changes in the
+  files at the path following path where we set the environment varibles for the Production DynmoDB Database.
+   
+             aws/cfn/machine-user/config.toml
+             aws/cfn/service/template.yaml
+             backend-flask/lib/ddb.py
+             erb/backend-flask.env.erb 
+             
+- We update the service template with the envr by running the command at the path ./bin/cfn/service which generates a cfn changeset for execution, post which we do a pull request by merging "main" into "production"
+- We get a error " security token included in the request is invalid " on crudding in our application ,which is observed in the cloudwatch logs and the same is resolved by created a role " machineuser" using a CFN
+  template having the permissions to read and write into the Production DynamoDB Table - CrdDdb-DynamoDBTable-TPSQ22XBXP1B
+- Following CFN templates are added at the following paths. 
+
+
+            config.toml at the path aws/cfn/machine-user/config.toml
+            template.yaml at the path aws/cfn/machine-user/template.yaml
+            machineuser at the following path bin/cfn/machineuser
+            
+            frontend-react-js/src/pages/MessageGroupPage.js
+  
+  ![machineuser](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/120da5d9-bbb0-4cca-a8cc-85d1b87ce360)
+
+  ![machineuser_resource](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/3c738fd8-7607-4806-8237-08fb0fe84815)
+
+ - The machine user role's access key id and secret access keys are stored in the parameter store under the following variables
+      
+             /cruddur/backend-flask/AWS_ACCESS_KEY_ID
+             /cruddur/backend-flask/AWS_SECRET_ACCESS_KEY
+
+ - The above details are rolled out by releasing the change in the code pipeline : CrdCicd-Pipeline-CBU5WJZASPM1. Once the pipeline execution is successfull, we do check the application by login with another user
+
+ - Once the pipeline execution is successfull, we do check the application by login with another user ,but we cant send the message and the same is corrected by changes in the MessageGroupPage.js at the following 
+   path : frontend-react-js/src/pages/MessageGroupPage.js
+
+ - Since the changes wer made to the frontend files we run these again which generates a new invalidation file in the cloudfront distribution :  https://di38zz9ba2r5u.cloudfront.net    
+ 
+              ./bin/frontend/static-build
+              ./bin/frontend/sync
+ 
+  ![frontend_sync](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/8550457f-365d-4455-b72a-668fb185d320)
+
+
+ - The above bursts the cloudfront cache with the creation of the following invalidation file at the cloudfront
+
+ 
+   ![Cloudfront Invalidations2](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/60930e92-3812-4117-ab2b-ff245d17f8e9)
+
+         
+- The final outputs that we can see on our application on sending messages to another user along with snapshot of the messages in the Production Dynamodb Database : CrdDdb-DynamoDBTable-TPSQ22XBXP1B
+
+
+ ![HomePage ](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/27e6eec1-074d-49ed-90da-3696c1a8c431)
+
+ ![Messages (2)](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/4cf543d5-1e74-4410-9bee-9b439546f4d4)
+ 
+ 
+ ![messages](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/47055e53-6479-436f-a1f1-9857723aaeab)
+
+ 
+ ![messagebyotheruser](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/9437d5f7-6da3-4619-acd2-5be0843745f0)
+ 
+  
+ ![notifications](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/23c3a596-45ad-443c-a851-e4da240593f4)
+
+
+![DynamoDB Messages](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/d5a3943d-9adf-4316-b4ae-ce461358a53d)
+
+
+
+  
 
 
 
