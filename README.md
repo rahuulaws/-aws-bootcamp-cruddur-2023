@@ -30,7 +30,7 @@ The `/journal` directory contains
 - [x ] [Week 8 - Serverless Image Processing](journal/week8.md)
 - [x ] [Week 9 - CI/CD with CodePipeline, CodeBuild and CodeDeploy](journal/week9.md)
 - [x ] [Week 10 and Week 11 - CloudFormation Part 1 and 2](journal/week10.md)
-- [] [Week X](journal/week12.md)
+- [x ] [Week X](journal/week12.md)
 
 
 
