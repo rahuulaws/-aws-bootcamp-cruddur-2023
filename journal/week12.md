@@ -510,12 +510,113 @@
 
 ###  Cleanup Part 1
 
-.......................................................................................
+- We want to see data from another user on our application and so we need to seed data through the file - seed.sql by making the following additions and then login to the local postgres db : Cruddur , by using the 
+  command at the path ./bin/db/connect and inserting manually the sql command that were added in the seed.sql as below
+  
 
-...............................................................................
+                     (SELECT uuid from public.users WHERE users.handle = 'altbrown' LIMIT 1),
+                     'I am the other!',
+                      current_timestamp + interval '10 day'
+
+- After login to the application, we get to see the see data from two users on the " Home" page.
+
+ 
+ ![Homepage1](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/a07f5d18-8df2-492b-9aae-b4ac8adcb950)
+
+
+- Change is made to the file : ActivityShowPage.js on the path ./frontend-react-js/src/pages/ActivityShowPage.js so that status page shows "Crud" at the top instead of "Home" that w have been seeing so far. 
+- Back Button Arrow is also added which when pressed takes us to the "Home" page of the application by making changes in the activityshowpage.js and activityshowpage.css. 
+- Exact time is also rendered by making changes in the file : ActivityItem.js at the path ./frontend-react-js/src/components/ActivityItem.js
+- The above 3 changes result in the below modifications.
+
+  ![Timeline](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/af5d85a1-b71c-4075-b2eb-82987b70ef5a)
+
+
+- We realize that our migration has not been successfull on checking our local db -cruddur where the "reply_to_activitiy_uuid" still reflects as type " Integer" instead of "uuid"
+- Currently we do not know whether the migration has failed or is succesfull, since it currently does not tell us about the outcome and we have to once again run the migration by doing the following in the
+  " migrate" file at the folloiwng path ./bin/db/migrate 
+                 
+                       last_successful_run = set_last_successful_run(file_time)
+
+- The above ensures that the last successful run is not against the current time but the last time it ran ( or was executed) and we run the command ./bin/db/setup to get the folloiwng output
+
+ 
+  ![migration](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/93f4c9eb-bea5-4b39-8a15-6f2fbd8d4120)
+
+  
+- We create a new file "ActivityShowItem.js" at the path ./frontend-react-js/src/components/ActivityShowItem.js along with changes in activitiyitem.css and activitiycontent.css to further fine tune the rendering of
+  our pages in the application
+
+
+
+                                 import './ActivityItem.css';
+                                 import ActivityActionReply  from '../components/ActivityActionReply';
+                                 import ActivityActionRepost  from '../components/ActivityActionRepost';
+                                 import ActivityActionLike  from '../components/ActivityActionLike';
+                                 import ActivityActionShare  from '../components/ActivityActionShare';
+
+                                 import { Link } from "react-router-dom";
+                                 import { format_datetime, time_ago, time_future } from '../lib/DateTimeFormats';
+                                 import {ReactComponent as BombIcon} from './svg/bomb.svg';
+
+                                 export default function ActivityShowItem(props) {
+
+                                   const attrs = {}
+                                   attrs.className = 'activity_item expanded'
+                                   return (
+                                     <div {...attrs}>
+                                       <div className="acitivty_main">
+                                         <div className='activity_content_wrap'>
+                                           <div className='activity_content'>
+                                             <Link className='activity_avatar'to={`/@`+props.activity.handle} ></Link>
+                                             <div className='activity_meta'>
+                                               <div className='activity_identity' >
+                                                 <Link className='display_name' to={`/@`+props.activity.handle}>{props.activity.display_name}</Link>
+                                                 <Link className="handle" to={`/@`+props.activity.handle}>@{props.activity.handle}</Link>
+                                               </div>{/* activity_identity */}
+                                               <div className='activity_times'>
+                                                 <div className="created_at" title={format_datetime(props.activity.created_at)}>
+                                                   <span className='ago'>{time_ago(props.activity.created_at)}</span> 
+                                                 </div>
+                                                 <div className="expires_at" title={format_datetime(props.activity.expires_at)}>
+                                                   <BombIcon className='icon' />
+                                                   <span className='ago'>{time_future(props.activity.expires_at)}</span>
+                                                 </div>
+                                               </div>{/* activity_times */}
+                                             </div>{/* activity_meta */}
+                                           </div>{/* activity_content */}
+                                           <div className="message">{props.activity.message}</div>
+                                         </div>
+
+                                         <div className='expandedMeta'>
+                                           <div class="created_at">
+                                             {format_datetime(props.activity.created_at)}
+                                           </div>
+                                         </div>
+                                         <div className="activity_actions">
+                                           <ActivityActionReply setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count=                                                            {props.activity.replies_count}/>
+                                           <ActivityActionRepost activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
+                                           <ActivityActionLike activity_uuid={props.activity.uuid} count={props.activity.likes_count}/>
+                                           <ActivityActionShare activity_uuid={props.activity.uuid} />
+                                         </div>
+                                       </div>
+                                     </div>
+                                   )
+                                 }
+
+
+
+
+       
+  ![Homepage](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/25c88023-291b-40f7-b441-40dd7695aff3)
+
+  
+    
+  ![Addingotheruser](https://github.com/rahuulaws/-aws-bootcamp-cruddur-2023/assets/77395830/cf371f67-863d-412e-ba9a-36ee426bd1db)
+
+
 
 ###  Cleanup Part 2
-..................................................................................
 
 - We check whether the AWS RDS Production DB is upto date by checking whether the "reply_to_activity_uuid" has a type which is " integer " or " uuid". Since it was still " integer" we needed to run the migration on 
   the Prod database by running the following command.
